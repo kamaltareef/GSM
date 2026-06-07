@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GSM — פלטפורמת עובדים</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: #0f1923; font-family: 'Heebo', sans-serif; }
+  body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+  #root { width: 100%; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+
+  /* Phone shell */
+  .phone-shell {
+    width: 390px;
+    height: 844px;
+    border-radius: 50px;
+    background: #fff;
+    box-shadow:
+      0 0 0 12px #1a1a2e,
+      0 0 0 14px #2a2a3e,
+      0 40px 80px rgba(0,0,0,0.7);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  /* Notch */
+  .phone-notch {
+    position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 130px; height: 36px;
+    background: #1a1a2e;
+    border-radius: 0 0 22px 22px;
+    z-index: 100;
+  }
+  .phone-screen {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    direction: rtl;
+  }
+
+  /* Status bar */
+  .status-bar {
+    height: 52px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0 28px 8px;
+    flex-shrink: 0;
+    font-family: 'Heebo', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  /* Bottom nav */
+  .bottom-nav {
+    height: 80px;
+    background: #fff;
+    border-top: 1px solid #e8edf3;
+    display: flex;
+    align-items: flex-start;
+    padding-top: 10px;
+    flex-shrink: 0;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+  }
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    padding: 4px 0;
+    transition: all 0.2s;
+    background: none;
+    border: none;
+    font-family: 'Heebo', sans-serif;
+  }
+  .nav-item .nav-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: #8fa0b0;
+    transition: color 0.2s;
+  }
+  .nav-item.active .nav-label { color: #1A365D; }
+  .nav-item svg { transition: all 0.2s; }
+
+  /* Scrollable content */
+  .screen-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+  .screen-scroll::-webkit-scrollbar { display: none; }
+
+  /* Shared card */
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 2px 12px rgba(26,54,93,0.08), 0 1px 3px rgba(0,0,0,0.04);
+  }
+
+  /* Badge */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .badge-green { background: #f0faf4; color: #38A169; }
+  .badge-red { background: #fff5f5; color: #E53E3E; }
+  .badge-blue { background: #ebf4ff; color: #2b6cb0; }
+  .badge-orange { background: #fffaf0; color: #dd6b20; }
+  .badge-gray { background: #f7fafc; color: #718096; }
+
+  /* Primary button */
+  .btn-primary {
+    background: #1A365D;
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-family: 'Heebo', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 15px 24px;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-primary:active { opacity: 0.88; transform: scale(0.98); }
+  .btn-green {
+    background: #38A169;
+  }
+  .btn-red {
+    background: #E53E3E;
+  }
+  .btn-outline {
+    background: transparent;
+    color: #1A365D;
+    border: 1.5px solid #1A365D;
+    border-radius: 14px;
+    font-family: 'Heebo', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 13px 24px;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+  }
+
+  /* Screen header */
+  .screen-header {
+    padding: 16px 20px 12px;
+    background: #fff;
+    border-bottom: 1px solid #f0f4f8;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+  .screen-header h1 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1A365D;
+    flex: 1;
+  }
+  .back-btn {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: #f0f4f8;
+    border: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* Input field */
+  .field {
+    background: #f7fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-family: 'Heebo', sans-serif;
+    font-size: 15px;
+    color: #1A365D;
+    width: 100%;
+    transition: border-color 0.2s;
+    direction: rtl;
+    text-align: right;
+  }
+  .field:focus {
+    outline: none;
+    border-color: #1A365D;
+    background: #fff;
+  }
+  .field::placeholder { color: #a0aec0; }
+
+  /* Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  .fade-in { animation: fadeIn 0.3s ease; }
+  .slide-up { animation: slideUp 0.35s ease; }
+
+  /* Live dot */
+  .live-dot {
+    width: 8px; height: 8px;
+    background: #38A169;
+    border-radius: 50%;
+    animation: pulse 1.8s infinite;
+    display: inline-block;
+  }
+
+  /* Confirmation overlay */
+  .confirm-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(15,25,40,0.6);
+    display: flex;
+    align-items: flex-end;
+    z-index: 200;
+    backdrop-filter: blur(4px);
+  }
+  .confirm-sheet {
+    background: #fff;
+    width: 100%;
+    border-radius: 24px 24px 0 0;
+    padding: 24px 20px 36px;
+    animation: slideUp 0.25s ease;
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+// ──────────────────────────────────────────────
+// DATA
+// ──────────────────────────────────────────────
+const ORDERS_DATA = [
+  { id: 'ORD-241', items: [{ name: 'קפה שחור', qty: 1 }, { name: 'קרואסון', qty: 2 }], time: '09:14', status: 'pending', plate: 'ABC-123' },
+  { id: 'ORD-240', items: [{ name: 'לאטה', qty: 2 }, { name: 'מאפה שוקולד', qty: 1 }, { name: 'מיץ תפוז', qty: 1 }], time: '09:08', status: 'preparation', plate: 'XYZ-789' },
+  { id: 'ORD-239', items: [{ name: 'אספרסו', qty: 1 }], time: '08:55', status: 'ready', plate: 'MNP-456' },
+];
+
+const SHIFTS_DATA = [
+  { date: '27.04', day: 'ראשון', start: '07:00', end: '15:00', station: 'תחנה ראשית', duration: '8ש' },
+  { date: '28.04', day: 'שני', start: '07:00', end: '15:00', station: 'תחנה ראשית', duration: '8ש' },
+  { date: '30.04', day: 'רביעי', start: '15:00', end: '23:00', station: 'תחנה ראשית', duration: '8ש' },
+  { date: '02.05', day: 'שישי', start: '07:00', end: '15:00', station: 'תחנה צפון', duration: '8ש' },
+  { date: '04.05', day: 'ראשון', start: '15:00', end: '23:00', station: 'תחנה ראשית', duration: '8ש' },
+];
+
+const SERVICE_CALLS = [
+  {
+    id: 'SC-0041', type: 'תקלת מתקן תדלוק', desc: 'משאבת דלק #3 אינה מגיבה. לחץ לא תקין מגלה חסימה בצינור',
+    location: 'אי תדלוק 3 — צד מזרח', tools: ['מפתח ברגים 14/17', 'מד לחץ דיגיטלי', 'ערכת אטמים', 'פנס עבודה'],
+    priority: 'urgent', status: 'active',
+  },
+];
+
+const CALL_HISTORY = [
+  { id: 'SC-0039', type: 'תקלת מצלמת אבטחה', date: '25.04', duration: '38 דק\'', status: 'resolved' },
+  { id: 'SC-0037', type: 'תקלת מסוף תשלום', date: '23.04', duration: '22 דק\'', status: 'resolved' },
+  { id: 'SC-0034', type: 'תקלת מתאם WiFi', date: '21.04', duration: '15 דק\'', status: 'resolved' },
+];
+
+// ──────────────────────────────────────────────
+// ICONS
+// ──────────────────────────────────────────────
+const Icon = ({ name, size = 24, color = 'currentColor' }) => {
+  const icons = {
+    home: <svg width={size} height={size} viewBox="0 0 24 24" fill="none"><path d="M3 9.5L12 3L21 9.5V20a1 1 0 01-1 1H5a1 1 0 01-1-1V9.5z" stroke={color} strokeWidth="1.8" strokeLinejoin="round"/><path d="M9 21V12h6v9" stroke={color} strokeWidth="1.8" strokeLinejoin="round"/></svg>,
+    orders: <svg width={size} height={size} viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="3" stroke={color} strokeWidth="1.8"/><path d="M8 8h8M8 12h8M8 16h5" stroke={color} strokeWidth="1.8" strokeLinecap="round"/></svg>,
+    shifts: <svg width={size} height={size} viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="17" rx="3" stroke={color} strokeWidth="1.8"/><path d="M3 9h18M8 2v4M16 2v4" stroke={color} strokeWidth="1.8" strokeLinecap="round"/></svg>,
+    profile: <svg width={size} height={size} viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke={color} strokeWidth="1.8"/><path d="M5 20c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke={color} strokeWidth="1.8" strokeLinecap="round"/></svg>,
+    clock: <svg width={size} height={size} viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke={color} strokeWidth="1.8"/><path d="M12 7v5l3 3" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+    back: <svg width={16} height={16} viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+    check: <svg width={size} height={size} viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+    alert: <svg width={size} height={size} viewBox="0 0 24 24" fill="none"><path d="M12 2L2 20h20L12 2z" stroke={color} strokeWidth="1.8" strokeLinejoin="round"/><path d="M12 9v5M12 16.5v.5" stroke={color} strokeWidth="2" strokeLinecap="round"/></svg>,
+    wrench: <svg width={size} height={size} viewBox="0 0 24 24" fill="none"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+    fingerprint: <svg width={size} height={size} viewBox="0 0 24 24" fill="none"><path d="M12 2C9.4 2 7 3 5.2 4.8" stroke={color} strokeWidth="1.8" strokeLinecap="round"/><path d="M2.7 10.2A10 10 0 0012 22a10 10 0 009.4-6.6" stroke={color} strokeWidth="1.8" strokeLinecap="round"/><path d="M12 6a6 6 0 016 6c0 2.1-.5 4.1-1.4 5.8" stroke={color} strokeWidth="1.8" strokeLinecap="round"/><path d="M6.4 11a6 6 0 01.5-2.5" stroke={color} strokeWidth="1.8" strokeLinecap="round"/><path d="M12 10a2 2 0 012 2c0 2.5-.5 4.9-1.4 7" stroke={color} strokeWidth="1.8" strokeLinecap="round"/><path d="M12 10a2 2 0 00-2 2c0 1.5.2 3 .6 4.4" stroke={color} strokeWidth="1.8" strokeLinecap="round"/></svg>,
+    bell: <svg width={size} height={size} viewBox="0 0 24 24" fill="none"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+    swap: <svg width={size} height={size} viewBox="0 0 24 24" fill="none"><path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+    tool: <svg width={14} height={14} viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" fill={color}/></svg>,
+  };
+  return icons[name] || null;
+};
+
+// ──────────────────────────────────────────────
+// STATUS BAR
+// ──────────────────────────────────────────────
+function StatusBar({ dark = false }) {
+  const [time, setTime] = useState(() => {
+    const d = new Date();
+    return `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+  });
+  useEffect(() => {
+    const t = setInterval(() => {
+      const d = new Date();
+      setTime(`${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`);
+    }, 10000);
+    return () => clearInterval(t);
+  }, []);
+  const c = dark ? '#fff' : '#1A365D';
+  return (
+    <div style={{ height: 52, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', padding: '0 28px 8px', flexShrink: 0, background: dark ? '#1A365D' : '#fff' }}>
+      <div style={{ width: 70 }} />
+      <div style={{ width: 130, height: 34, background: '#1a1a2e', borderRadius: '0 0 18px 18px', position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)' }} />
+      <span style={{ fontFamily: 'Heebo', fontWeight: 700, fontSize: 15, color: c, zIndex: 1 }}>{time}</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 5, zIndex: 1 }}>
+        <svg width="16" height="12" viewBox="0 0 19 12"><rect x="0" y="7.5" width="3.2" height="4.5" rx="0.7" fill={c}/><rect x="4.8" y="5" width="3.2" height="7" rx="0.7" fill={c}/><rect x="9.6" y="2.5" width="3.2" height="9.5" rx="0.7" fill={c}/><rect x="14.4" y="0" width="3.2" height="12" rx="0.7" fill={c}/></svg>
+        <svg width="23" height="12" viewBox="0 0 27 13"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke={c} strokeOpacity="0.35" fill="none"/><rect x="2" y="2" width="18" height="9" rx="2" fill={c}/><path d="M25 4.5V8.5C25.8 8.2 26.5 7.2 26.5 6.5C26.5 5.8 25.8 4.8 25 4.5Z" fill={c} fillOpacity="0.4"/></svg>
+      </div>
+    </div>
+  );
+}
+
+// ──────────────────────────────────────────────
+// BOTTOM NAV
+// ──────────────────────────────────────────────
+function BottomNav({ active, onNav, orderBadge }) {
+  const tabs = [
+    { id: 'home', label: 'בית', icon: 'home' },
+    { id: 'orders', label: 'הזמנות', icon: 'orders' },
+    { id: 'shifts', label: 'משמרות', icon: 'shifts' },
+    { id: 'profile', label: 'פרופיל', icon: 'profile' },
+  ];
+  return (
+    <div className="bottom-nav">
+      {tabs.map(t => (
+        <button key={t.id} className={`nav-item ${active === t.id ? 'active' : ''}`} onClick={() => onNav(t.id)}>
+          <div style={{ position: 'relative' }}>
+            <Icon name={t.icon} size={24} color={active === t.id ? '#1A365D' : '#8fa0b0'} />
+            {t.id === 'orders' && orderBadge > 0 && (
+              <div style={{ position: 'absolute', top: -4, left: -4, width: 16, height: 16, background: '#E53E3E', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #fff' }}>
+                <span style={{ fontSize: 9, fontWeight: 700, color: '#fff' }}>{orderBadge}</span>
+              </div>
+            )}
+          </div>
+          <span className="nav-label">{t.label}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// ──────────────────────────────────────────────
+// SCREEN 1 — LOGIN
+// ──────────────────────────────────────────────
+function LoginScreen({ onLogin }) {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [role, setRole] = useState('employee'); // employee | technician
+
+  const handleLogin = (r) => {
+    setLoading(true);
+    setTimeout(() => { setLoading(false); onLogin(r || role); }, 1200);
+  };
+
+  return (
+    <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', background: '#fff' }}>
+      <StatusBar />
+      {/* Header */}
+      <div style={{ background: '#1A365D', padding: '28px 24px 32px', textAlign: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, marginBottom: 8 }}>
+          <div style={{ width: 44, height: 44, background: 'rgba(255,255,255,0.15)', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="white" strokeWidth="1.8"/><path d="M12 6v6l4 2" stroke="white" strokeWidth="1.8" strokeLinecap="round"/></svg>
+          </div>
+          <div>
+            <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 11, fontWeight: 500, letterSpacing: 2 }}>GSM SYSTEM</div>
+            <div style={{ color: '#fff', fontSize: 20, fontWeight: 800 }}>פלטפורמת עובדים</div>
+          </div>
+        </div>
+      </div>
+
+      <div className="screen-scroll" style={{ padding: '28px 24px 24px' }}>
+        {/* Role selector */}
+        <div style={{ display: 'flex', background: '#f0f4f8', borderRadius: 14, padding: 4, marginBottom: 24, gap: 4 }}>
+          {[['employee', 'עובד חנות'], ['technician', 'טכנאי רובוטיקה']].map(([r, label]) => (
+            <button key={r} onClick={() => setRole(r)} style={{
+              flex: 1, padding: '10px 8px', borderRadius: 10, border: 'none', cursor: 'pointer',
+              fontFamily: 'Heebo', fontWeight: 600, fontSize: 13,
+              background: role === r ? '#1A365D' : 'transparent',
+              color: role === r ? '#fff' : '#8fa0b0',
+              transition: 'all 0.2s',
+            }}>{label}</button>
+          ))}
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: '#4a5568', marginBottom: 6 }}>שם משתמש</div>
+            <input className="field" placeholder="הכנס שם משתמש" value={username} onChange={e => setUsername(e.target.value)} />
+          </div>
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: '#4a5568', marginBottom: 6 }}>סיסמה</div>
+            <input className="field" type="password" placeholder="הכנס סיסמה" value={password} onChange={e => setPassword(e.target.value)} />
+          </div>
+        </div>
+
+        <button className="btn-primary" style={{ marginTop: 24, height: 52 }} onClick={() => handleLogin()}>
+          {loading ? (
+            <div style={{ width: 20, height: 20, border: '2.5px solid rgba(255,255,255,0.3)', borderTop: '2.5px solid #fff', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+          ) : 'כניסה למערכת'}
+        </button>
+
+        {/* Biometric */}
+        <div style={{ textAlign: 'center', margin: '20px 0 8px' }}>
+          <div style={{ color: '#a0aec0', fontSize: 13, marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center' }}>
+            <div style={{ flex: 1, height: 1, background: '#e2e8f0' }} />
+            <span>או</span>
+            <div style={{ flex: 1, height: 1, background: '#e2e8f0' }} />
+          </div>
+          <button onClick={() => handleLogin()} style={{
+            width: 72, height: 72, borderRadius: '50%', border: '2px solid #e2e8f0',
+            background: '#f7fafc', cursor: 'pointer', display: 'flex', alignItems: 'center',
+            justifyContent: 'center', margin: '0 auto', transition: 'all 0.2s',
+          }}>
+            <Icon name="fingerprint" size={36} color="#1A365D" />
+          </button>
+          <div style={{ fontSize: 12, color: '#a0aec0', marginTop: 8 }}>כניסה ביומטרית</div>
+        </div>
+      </div>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+    </div>
+  );
+}
+
+// ──────────────────────────────────────────────
+// SCREEN 2 — HOME DASHBOARD
+// ──────────────────────────────────────────────
+function HomeScreen({ onNav, clockedIn, orderCount, onBell }) {
+  return (
+    <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', background: '#f7fafc' }}>
+      <StatusBar />
+      {/* Top header */}
+      <div style={{ background: '#1A365D', padding: '16px 20px 28px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div>
+            <div style={{ color: 'rgba(255,255,255,0.65)', fontSize: 13, fontWeight: 500 }}>שלום,</div>
+            <div style={{ color: '#fff', fontSize: 22, fontWeight: 800, marginTop: 2 }}>דניאל כהן</div>
+          </div>
+          <button onClick={onBell} style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+            <div style={{ width: 42, height: 42, background: 'rgba(255,255,255,0.12)', borderRadius: 13, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Icon name="bell" size={20} color="#fff" />
+            </div>
+            {orderCount > 0 && <div style={{ position: 'absolute', top: -3, left: -3, width: 16, height: 16, background: '#E53E3E', borderRadius: '50%', border: '2px solid #1A365D', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ fontSize: 9, color: '#fff', fontWeight: 700 }}>{orderCount}</span></div>}
+          </button>
+        </div>
+        {/* Shift status pill */}
+        <div style={{ marginTop: 14, display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,0.1)', borderRadius: 12, padding: '10px 14px', width: 'fit-content' }}>
+          <div className="live-dot" style={{ background: clockedIn ? '#68d391' : '#fc8181' }} />
+          <span style={{ color: '#fff', fontSize: 13, fontWeight: 600 }}>{clockedIn ? 'משמרת פעילה — 07:00 עד 15:00' : 'לא במשמרת'}</span>
+        </div>
+      </div>
+
+      <div className="screen-scroll" style={{ padding: '16px 16px 8px', marginTop: -14 }}>
+        {/* Quick actions */}
+        <div style={{ background: '#fff', borderRadius: 20, padding: '4px', boxShadow: '0 2px 16px rgba(26,54,93,0.1)', marginBottom: 16 }}>
+          {[
+            { id: 'clockin', icon: 'clock', label: 'שעון נוכחות', color: '#1A365D', bg: '#ebf4ff' },
+            { id: 'orders', icon: 'orders', label: 'הזמנות ממתינות', color: '#1A365D', bg: '#ebf8ff', badge: orderCount },
+            { id: 'shifts', icon: 'shifts', label: 'המשמרות שלי', color: '#1A365D', bg: '#f0f4f8' },
+          ].map((item, i) => (
+            <button key={item.id} onClick={() => onNav(item.id)} style={{
+              width: '100%', background: 'none', border: 'none', cursor: 'pointer',
+              padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 14,
+              borderBottom: i < 2 ? '1px solid #f0f4f8' : 'none',
+              borderRadius: i === 0 ? '16px 16px 0 0' : i === 2 ? '0 0 16px 16px' : 0,
+            }}>
+              <div style={{ width: 48, height: 48, background: item.bg, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <Icon name={item.icon} size={22} color={item.color} />
+              </div>
+              <div style={{ flex: 1, textAlign: 'right' }}>
+                <div style={{ fontSize: 15, fontWeight: 700, color: '#1A365D' }}>{item.label}</div>
+                <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 1 }}>{item.sub}</div>
+              </div>
+              {item.badge > 0 && (
+                <div style={{ background: '#E53E3E', color: '#fff', width: 24, height: 24, borderRadius: '50%', fontSize: 12, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{item.badge}</div>
+              )}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ transform: 'rotate(180deg)', flexShrink: 0 }}>
+                <path d="M9 18l6-6-6-6" stroke="#cbd5e0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          ))}
+        </div>
+
+        {/* Today card */}
+        <div className="card" style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: '#94a3b8', marginBottom: 12, letterSpacing: 0.5 }}>{(() => { const d = new Date(); const months = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר']; return `היום, ${d.getDate()} ${months[d.getMonth()]}`; })()}</div>
+          <div style={{ display: 'flex', gap: 10 }}>
+            {[{ l: 'תחנה', v: 'ראשית' }, { l: 'תפקיד', v: 'עובד חנות' }, { l: 'שעה', v: '07:00–15:00' }].map(({ l, v }) => (
+              <div key={l} style={{ flex: 1, background: '#f7fafc', borderRadius: 12, padding: '10px 8px', textAlign: 'center' }}>
+                <div style={{ fontSize: 11, color: '#94a3b8', fontWeight: 500 }}>{l}</div>
+                <div style={{ fontSize: 14, color: '#1A365D', fontWeight: 700, marginTop: 3 }}>{v}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Live indicator */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', background: '#f0faf4', borderRadius: 12, marginBottom: 8 }}>
+          <div className="live-dot" />
+          <span style={{ fontSize: 13, color: '#38A169', fontWeight: 600 }}>מחובר — עדכונים חיים פעילים</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ──────────────────────────────────────────────
+// SCREEN 3 — CLOCK IN / OUT
+// ──────────────────────────────────────────────
+function ClockScreen({ clockedIn, setClockedIn, onBack }) {
+  const [elapsed, setElapsed] = useState(0);
+  const [clockInTime, setClockInTime] = useState(null);
+  const [note, setNote] = useState('');
+  const [confirm, setConfirm] = useState(false);
+
+  useEffect(() => {
+    if (!clockedIn) return;
+    const t = setInterval(() => setElapsed(e => e + 1), 1000);
+    return () => clearInterval(t);
+  }, [clockedIn]);
+
+  // Scheduled shift start for today (07:00)
+  const SCHEDULED_START = { h: 7, m: 0 };
+  const isEarlyClockIn = () => {
+    const d = new Date();
+    return d.getHours() < SCHEDULED_START.h || (d.getHours() === SCHEDULED_START.h && d.getMinutes() < SCHEDULED_START.m);
+  };
+  const earlyMinutes = () => {
+    const d = new Date();
+    const nowMins = d.getHours() * 60 + d.getMinutes();
+    const schedMins = SCHEDULED_START.h * 60 + SCHEDULED_START.m;
+    return Math.max(0, schedMins - nowMins);
+  };
+
+  const getNowStr = () => {
+    const d = new Date();
+    return `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}:${d.getSeconds().toString().padStart(2,'0')}`;
+  };
+  const getTodayStr = () => {
+    const d = new Date();
+    return `${d.getDate().toString().padStart(2,'0')}.${(d.getMonth()+1).toString().padStart(2,'0')}`;
+  };
+
+  const handleConfirm = () => {
+    if (clockedIn) {
+      // Ending shift — save to history
+      const outTime = getNowStr();
+      const inTime = clockInTime || '07:00:00';
+      const durH = Math.floor(elapsed / 3600).toString().padStart(2,'0');
+      const durM = Math.floor((elapsed % 3600) / 60).toString().padStart(2,'0');
+      const durS = (elapsed % 60).toString().padStart(2,'0');
+      setHistory(h => [{ date: getTodayStr(), in: inTime, out: outTime, dur: `${durH}:${durM}:${durS}` }, ...h]);
+      setElapsed(0);
+      setClockInTime(null);
+    } else {
+      // Starting shift — record clock-in time
+      setClockInTime(getNowStr());
+      setElapsed(0);
+    }
+    setClockedIn(!clockedIn);
+    setConfirm(false);
+  };
+
+  const fmt = (s) => {
+    const h = Math.floor(s / 3600).toString().padStart(2, '0');
+    const m = Math.floor((s % 3600) / 60).toString().padStart(2, '0');
+    const sec = (s % 60).toString().padStart(2, '0');
+    return `${h}:${m}:${sec}`;
+  };
+
+  const [timeStr, setTimeStr] = useState(getNowStr());
+  useEffect(() => {
+    const t = setInterval(() => setTimeStr(getNowStr()), 1000);
+    return () => clearInterval(t);
+  }, []);
+
+  const [history, setHistory] = useState([
+    { date: '01.05', in: '07:01:22', out: '15:00:48', dur: '7:59:26' },
+    { date: '30.04', in: '07:00:05', out: '14:58:33', dur: '7:58:28' },
+    { date: '28.04', in: '07:02:11', out: '15:01:07', dur: '7:58:56' },
+    { date: '27.04', in: '15:00:30', out: '23:01:15', dur: '8:00:45' },
+    { date: '25.04', in: '07:00:02', out: '15:00:50', dur: '8:00:48' },
+  ]);
+
+  return (
+    <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', background: '#f7fafc' }}>
+      <StatusBar />
+      <div className="screen-header">
+        <button className="back-btn" onClick={onBack}><Icon name="back" size={16} color="#1A365D" /></button>
+        <h1>שעון נוכחות</h1>
+        
+      </div>
+
+      <div className="screen-scroll" style={{ padding: '20px 16px 16px' }}>
+        {/* Clock card */}
+        <div style={{ background: clockedIn ? '#1A365D' : '#fff', borderRadius: 24, padding: '24px', textAlign: 'center', marginBottom: 16, boxShadow: '0 4px 24px rgba(26,54,93,0.15)' }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: clockedIn ? 'rgba(255,255,255,0.6)' : '#94a3b8', marginBottom: 6 }}>שעה נוכחית</div>
+          <div style={{ fontSize: 36, fontWeight: 800, color: clockedIn ? '#fff' : '#1A365D', fontVariantNumeric: 'tabular-nums', letterSpacing: 1, marginBottom: 16 }}>{timeStr.slice(0,5)}<span style={{ fontSize: 22, opacity: 0.7 }}>{timeStr.slice(5)}</span></div>
+          <div style={{ fontSize: 12, fontWeight: 600, color: clockedIn ? 'rgba(255,255,255,0.6)' : '#94a3b8', marginBottom: 4 }}>{(() => { const d = new Date(); const days = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת']; const months = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר']; return `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`; })()}</div>
+          {clockedIn && (
+            <div style={{ marginTop: 16, background: 'rgba(255,255,255,0.1)', borderRadius: 14, padding: '12px 16px' }}>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)', marginBottom: 4 }}>זמן משמרת</div>
+              <div style={{ fontSize: 28, fontWeight: 800, color: '#68d391', fontVariantNumeric: 'tabular-nums' }}>{fmt(elapsed)}</div>
+            </div>
+          )}
+        </div>
+
+        {/* Main action */}
+        <button className="btn-primary" style={{ marginBottom: 16, background: clockedIn ? '#E53E3E' : '#38A169', height: 56, fontSize: 17 }}
+          onClick={() => setConfirm(true)}>
+          {clockedIn ? '⏹ יציאה ממשמרת' : '▶ כניסה למשמרת'}
+        </button>
+
+        {/* Notes */}
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: '#4a5568', marginBottom: 8 }}>הערות לסיום משמרת</div>
+          <textarea className="field" rows={3} placeholder="רשום הערות אישיות למשמרת..." value={note} onChange={e => setNote(e.target.value)}
+            style={{ resize: 'none', lineHeight: '1.6' }} />
+        </div>
+
+        {/* History */}
+        <div style={{ fontSize: 14, fontWeight: 700, color: '#1A365D', marginBottom: 10 }}>היסטוריית משמרות</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 8 }}>
+          {history.map((h, i) => (
+            <div key={i} className="card" style={{ padding: '12px 14px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: '#1A365D' }}>{h.date}</div>
+                <span className="badge badge-green" style={{ fontSize: 11 }}>{h.dur}</span>
+              </div>
+              <div style={{ display: 'flex', gap: 16, marginTop: 6 }}>
+                <div style={{ fontSize: 12, color: '#718096' }}>כניסה: <span style={{ color: '#38A169', fontWeight: 600 }}>{h.in}</span></div>
+                <div style={{ fontSize: 12, color: '#718096' }}>יציאה: <span style={{ color: '#E53E3E', fontWeight: 600 }}>{h.out}</span></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Confirm sheet */}
+      {confirm && (
+        <div className="confirm-overlay" onClick={() => setConfirm(false)}>
+          <div className="confirm-sheet" onClick={e => e.stopPropagation()}>
+            <div style={{ width: 36, height: 4, background: '#e2e8f0', borderRadius: 2, margin: '0 auto 20px' }} />
+            <div style={{ fontSize: 18, fontWeight: 800, color: '#1A365D', marginBottom: 6 }}>{clockedIn ? 'אישור יציאה ממשמרת' : 'אישור כניסה למשמרת'}</div>
+            <div style={{ fontSize: 14, color: '#718096', marginBottom: !clockedIn && isEarlyClockIn() ? 12 : 20 }}>השעה: {timeStr.slice(0,5)} — 7 יוני 2026</div>
+            {!clockedIn && isEarlyClockIn() && (
+              <div style={{ background: '#fffaf0', border: '1.5px solid #f6ad55', borderRadius: 12, padding: '12px 14px', marginBottom: 16, display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: 1 }}><path d="M12 2L2 20h20L12 2z" stroke="#dd6b20" strokeWidth="1.8" strokeLinejoin="round"/><path d="M12 9v5M12 16.5v.5" stroke="#dd6b20" strokeWidth="2" strokeLinecap="round"/></svg>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: '#dd6b20' }}>כניסה לפני הזמן המיועד</div>
+                  <div style={{ fontSize: 12, color: '#975a16', marginTop: 2 }}>המשמרת מתחילה ב-07:00 — אתה מקדים ב-{earlyMinutes()} דקות. הכניסה תירשם ותועבר לידיעת המנהל.</div>
+                </div>
+              </div>
+            )}
+            <button className="btn-primary" style={{ background: clockedIn ? '#E53E3E' : '#38A169', marginBottom: 10 }}
+              onClick={handleConfirm}>
+              {clockedIn ? 'אישור יציאה' : 'אישור כניסה'}
+            </button>
+            <button className="btn-outline" onClick={() => setConfirm(false)}>ביטול</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ──────────────────────────────────────────────
+// SCREEN 4 — PENDING ORDERS
+// ──────────────────────────────────────────────
+function OrdersScreen({ orders, setOrders, onSelect, onBack }) {
+  const statusLabel = { pending: 'ממתין', preparation: 'בהכנה', ready: 'מוכן', delivered: 'נמסר' };
+  const statusClass = { pending: 'badge-orange', preparation: 'badge-blue', ready: 'badge-green', delivered: 'badge-gray' };
+
+  const markReady = (id, e) => {
+    e.stopPropagation();
+    setOrders(orders.map(o => o.id === id ? { ...o, status: 'ready' } : o));
+  };
+
+  return (
+    <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', background: '#f7fafc' }}>
+      <StatusBar />
+      <div className="screen-header">
+        <button className="back-btn" onClick={onBack}><Icon name="back" size={16} color="#1A365D" /></button>
+        <h1>הזמנות פעילות</h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#f0faf4', borderRadius: 20, padding: '4px 10px' }}>
+          <div className="live-dot" />
+          <span style={{ fontSize: 11, color: '#38A169', fontWeight: 600 }}>חי</span>
+        </div>
+      </div>
+
+      <div className="screen-scroll" style={{ padding: '16px 16px 8px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {orders.map(order => (
+            <div key={order.id} className="card slide-up" onClick={() => onSelect(order)} style={{ cursor: 'pointer' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
+                <div>
+                  <span style={{ fontSize: 16, fontWeight: 800, color: '#1A365D' }}>{order.id}</span>
+                  <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 2 }}>התקבל {order.time}</div>
+                </div>
+                <span className={`badge ${statusClass[order.status]}`}>{statusLabel[order.status]}</span>
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 12 }}>
+                {order.items.map((item, i) => (
+                  <div key={i} style={{ background: '#f7fafc', borderRadius: 8, padding: '5px 10px', fontSize: 13, color: '#4a5568', fontWeight: 500 }}>
+                    {item.name} × {item.qty}
+                  </div>
+                ))}
+              </div>
+              {order.status !== 'ready' && (
+                <button className="btn-primary" style={{ height: 40, fontSize: 13, background: '#38A169' }}
+                  onClick={e => markReady(order.id, e)}>
+                  <Icon name="check" size={14} color="#fff" /> סמן כמוכן
+                </button>
+              )}
+              {order.status === 'ready' && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#38A169', fontSize: 13, fontWeight: 600 }}>
+                  <Icon name="check" size={16} color="#38A169" /> מוכן למסירה
+                </div>
+              )}
+              {order.status === 'delivered' && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#718096', fontSize: 13, fontWeight: 600 }}>
+                  <Icon name="check" size={16} color="#718096" /> נמסר ללקוח
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ──────────────────────────────────────────────
+// SCREEN 5 — ORDER DETAIL
+// ──────────────────────────────────────────────
+function OrderDetailScreen({ order, onBack, onDeliver }) {
+  const [checked, setChecked] = useState({});
+  const [confirm, setConfirm] = useState(false);
+  const allChecked = order.items.every((_, i) => checked[i]);
+
+  return (
+    <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', background: '#f7fafc' }}>
+      <StatusBar />
+      <div className="screen-header">
+        <button className="back-btn" onClick={onBack}><Icon name="back" size={16} color="#1A365D" /></button>
+        <h1>פרטי הזמנה</h1>
+        <span style={{ fontSize: 12, color: '#94a3b8', fontWeight: 500 }}>{order.id}</span>
+      </div>
+
+      <div className="screen-scroll" style={{ padding: '16px 16px 8px' }}>
+        {/* Vehicle plate */}
+        <div className="card" style={{ marginBottom: 14, display: 'flex', alignItems: 'center', gap: 14 }}>
+          <div style={{ background: '#1A365D', borderRadius: 10, padding: '10px 14px', textAlign: 'center' }}>
+            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.6)', marginBottom: 2, letterSpacing: 1 }}>לוחית רישוי</div>
+            <div style={{ fontSize: 18, fontWeight: 800, color: '#fff', letterSpacing: 2 }}>{order.plate}</div>
+          </div>
+          <div>
+            <div style={{ fontSize: 12, color: '#94a3b8' }}>זוהה אוטומטית</div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: '#1A365D', marginTop: 2 }}>רכב לקוח מזוהה</div>
+          </div>
+          <div style={{ marginRight: 'auto' }}>
+            
+          </div>
+        </div>
+
+        {/* Order time */}
+        <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
+          <div style={{ flex: 1, background: '#fff', borderRadius: 12, padding: '12px', textAlign: 'center', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
+            <div style={{ fontSize: 11, color: '#94a3b8' }}>נקלט</div>
+            <div style={{ fontSize: 15, fontWeight: 700, color: '#1A365D' }}>{order.time}</div>
+          </div>
+          <div style={{ flex: 1, background: '#fff', borderRadius: 12, padding: '12px', textAlign: 'center', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
+            <div style={{ fontSize: 11, color: '#94a3b8' }}>פריטים</div>
+            <div style={{ fontSize: 15, fontWeight: 700, color: '#1A365D' }}>{order.items.reduce((a, b) => a + b.qty, 0)}</div>
+          </div>
+        </div>
+
+        {/* Checklist */}
+        <div style={{ fontSize: 14, fontWeight: 700, color: '#1A365D', marginBottom: 10 }}>רשימת פריטים</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
+          {order.items.map((item, i) => (
+            <button key={i} onClick={() => setChecked(c => ({ ...c, [i]: !c[i] }))} style={{
+              background: checked[i] ? '#f0faf4' : '#fff', border: `1.5px solid ${checked[i] ? '#38A169' : '#e2e8f0'}`,
+              borderRadius: 12, padding: '14px 16px', cursor: 'pointer', display: 'flex',
+              alignItems: 'center', gap: 14, transition: 'all 0.2s',
+            }}>
+              <div style={{
+                width: 24, height: 24, borderRadius: 8, border: `2px solid ${checked[i] ? '#38A169' : '#cbd5e0'}`,
+                background: checked[i] ? '#38A169' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                flexShrink: 0, transition: 'all 0.2s',
+              }}>
+                {checked[i] && <Icon name="check" size={13} color="#fff" />}
+              </div>
+              <div style={{ flex: 1, textAlign: 'right' }}>
+                <div style={{ fontSize: 15, fontWeight: 600, color: checked[i] ? '#38A169' : '#1A365D', textDecoration: checked[i] ? 'line-through' : 'none' }}>{item.name}</div>
+              </div>
+              <div style={{ fontWeight: 700, fontSize: 14, color: '#94a3b8' }}>× {item.qty}</div>
+            </button>
+          ))}
+        </div>
+
+        <button className="btn-primary" style={{ background: allChecked ? '#38A169' : '#cbd5e0', marginBottom: 8, height: 52 }}
+          onClick={() => allChecked && setConfirm(true)} disabled={!allChecked}>
+          מסירה ללקוח
+        </button>
+        {!allChecked && <div style={{ textAlign: 'center', fontSize: 12, color: '#94a3b8' }}>סמן את כל הפריטים לפני מסירה</div>}
+      </div>
+
+      {confirm && (
+        <div className="confirm-overlay" onClick={() => setConfirm(false)}>
+          <div className="confirm-sheet" onClick={e => e.stopPropagation()}>
+            <div style={{ width: 36, height: 4, background: '#e2e8f0', borderRadius: 2, margin: '0 auto 20px' }} />
+            <div style={{ fontSize: 18, fontWeight: 800, color: '#1A365D', marginBottom: 6 }}>אישור מסירה</div>
+            <div style={{ fontSize: 14, color: '#718096', marginBottom: 20 }}>האם לסמן את ההזמנה {order.id} כמסורה ללקוח?</div>
+            <button className="btn-primary" style={{ background: '#38A169', marginBottom: 10 }} onClick={() => { setConfirm(false); onDeliver(order.id); onBack(); }}>אישור מסירה</button>
+            <button className="btn-outline" onClick={() => setConfirm(false)}>ביטול</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ──────────────────────────────────────────────
+// SCREEN 6 — MY SHIFTS
+// ──────────────────────────────────────────────
+function ShiftsScreen({ onBack }) {
+  const [swapOpen, setSwapOpen] = useState(false);
+  const [swapSent, setSwapSent] = useState(false);
+  const [swapTarget, setSwapTarget] = useState('');
+  const [swapReason, setSwapReason] = useState('');
+  const [swapShift, setSwapShift] = useState(null);
+
+  const weekDays = ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש'];
+  const shiftDays = [0, 1, 3, 5]; // indices with shifts
+
+  return (
+    <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', background: '#f7fafc' }}>
+      <StatusBar />
+      <div className="screen-header">
+        <button className="back-btn" onClick={onBack}><Icon name="back" size={16} color="#1A365D" /></button>
+        <h1>המשמרות שלי</h1>
+        
+      </div>
+
+      <div className="screen-scroll" style={{ padding: '16px 16px 8px' }}>
+        {/* Weekly calendar */}
+        <div className="card" style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: '#94a3b8', marginBottom: 12 }}>שבוע 27 אפר׳ – 3 מאי</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            {weekDays.map((day, i) => {
+              const dates = [27, 28, 29, 30, 1, 2, 3];
+              const isNewMonth = i >= 4; // May
+              return (
+                <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+                  <div style={{ fontSize: 12, color: '#94a3b8', fontWeight: 500 }}>{day}</div>
+                  <div style={{
+                    width: 34, height: 34, borderRadius: '50%',
+                    background: shiftDays.includes(i) ? '#1A365D' : (i === 0 ? '#ebf4ff' : 'transparent'),
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    border: i === 0 ? '2px solid #1A365D' : 'none',
+                  }}>
+                    <span style={{ fontSize: 13, fontWeight: shiftDays.includes(i) ? 700 : 400, color: shiftDays.includes(i) ? '#fff' : isNewMonth ? '#94a3b8' : '#4a5568' }}>
+                      {dates[i]}
+                    </span>
+                  </div>
+                  {shiftDays.includes(i) && <div className="live-dot" style={{ width: 5, height: 5, background: '#38A169' }} />}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Shifts list */}
+        <div style={{ fontSize: 14, fontWeight: 700, color: '#1A365D', marginBottom: 10 }}>פירוט משמרות</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
+          {SHIFTS_DATA.map((s, i) => (
+            <div key={i} className="card" style={{ padding: '14px 16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: '#1A365D' }}>{s.day}, {s.date}</div>
+                  <div style={{ fontSize: 13, color: '#718096', marginTop: 3 }}>{s.start} – {s.end} • {s.station}</div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <span className="badge badge-blue">{s.duration}</span>
+                  <button onClick={() => { setSwapShift(s); setSwapOpen(true); }} style={{
+                    display: 'block', marginTop: 6, background: 'none', border: 'none', cursor: 'pointer',
+                    fontSize: 11, color: '#94a3b8', fontFamily: 'Heebo',
+                  }}>החלפה</button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <button className="btn-primary" onClick={() => { setSwapShift(null); setSwapOpen(true); }} style={{ background: '#fff', color: '#1A365D', border: '1.5px solid #1A365D', height: 48, fontSize: 14, fontWeight: 600 }}>
+          <Icon name="swap" size={18} color="#1A365D" /> בקשת החלפת משמרת
+        </button>
+      </div>
+
+      {/* Swap sheet */}
+      {swapOpen && (
+        <div className="confirm-overlay" onClick={() => { setSwapOpen(false); setSwapSent(false); }}>
+          <div className="confirm-sheet" onClick={e => e.stopPropagation()}>
+            <div style={{ width: 36, height: 4, background: '#e2e8f0', borderRadius: 2, margin: '0 auto 20px' }} />
+            {swapSent ? (
+              <div style={{ textAlign: 'center', padding: '8px 0' }}>
+                <div style={{ width: 56, height: 56, background: '#f0faf4', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+                  <Icon name="check" size={28} color="#38A169" />
+                </div>
+                <div style={{ fontSize: 18, fontWeight: 800, color: '#1A365D', marginBottom: 6 }}>הבקשה נשלחה</div>
+                <span className="badge badge-orange" style={{ fontSize: 13 }}>ממתין לאישור מנהל</span>
+                <div style={{ fontSize: 13, color: '#718096', marginTop: 10, marginBottom: 20 }}>הבקשה נשלחה למנהל לאישור. תקבל הודעה בהמשך.</div>
+                <button className="btn-primary" onClick={() => { setSwapOpen(false); setSwapSent(false); }}>סגור</button>
+              </div>
+            ) : (
+              <>
+                <div style={{ fontSize: 18, fontWeight: 800, color: '#1A365D', marginBottom: 16 }}>בקשת החלפת משמרת</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: '#4a5568', marginBottom: 8 }}>איזו משמרת להחליף?</div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      {SHIFTS_DATA.map((s, i) => (
+                        <button key={i} onClick={() => setSwapShift(s)} style={{
+                          background: swapShift === s ? '#1A365D' : '#f7fafc',
+                          border: `1.5px solid ${swapShift === s ? '#1A365D' : '#e2e8f0'}`,
+                          borderRadius: 12, padding: '11px 14px', cursor: 'pointer',
+                          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                          transition: 'all 0.18s', fontFamily: 'Heebo',
+                        }}>
+                          <span style={{ fontSize: 14, fontWeight: 700, color: swapShift === s ? '#fff' : '#1A365D' }}>{s.day}, {s.date}</span>
+                          <span style={{ fontSize: 13, color: swapShift === s ? 'rgba(255,255,255,0.75)' : '#718096' }}>{s.start}–{s.end}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: '#4a5568', marginBottom: 6 }}>עובד מקבל</div>
+                    <input className="field" placeholder="שם העובד להחלפה" value={swapTarget} onChange={e => setSwapTarget(e.target.value)} />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: '#4a5568', marginBottom: 6 }}>סיבת ההחלפה</div>
+                    <textarea className="field" rows={3} placeholder="פרט את הסיבה..." value={swapReason} onChange={e => setSwapReason(e.target.value)} style={{ resize: 'none' }} />
+                  </div>
+                </div>
+                <button className="btn-primary" style={{ marginTop: 16, marginBottom: 10 }} onClick={() => setSwapSent(true)}>שלח בקשה</button>
+                <button className="btn-outline" onClick={() => setSwapOpen(false)}>ביטול</button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ──────────────────────────────────────────────
+// SCREEN 7 — SERVICE CALL (TECHNICIAN)
+// ──────────────────────────────────────────────
+function ServiceCallScreen({ onBack }) {
+  const [ack, setAck] = useState(false);
+  const [resolveOpen, setResolveOpen] = useState(false);
+  const [resolved, setResolved] = useState(false);
+  const [notes, setNotes] = useState('');
+  const call = SERVICE_CALLS[0];
+
+  return (
+    <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', background: '#f7fafc' }}>
+      <StatusBar />
+      <div className="screen-header" style={{ background: '#fff' }}>
+        <button className="back-btn" onClick={onBack}><Icon name="back" size={16} color="#1A365D" /></button>
+        <h1>קריאת שירות</h1>
+        <span className="badge badge-red" style={{ fontSize: 11 }}>דחוף</span>
+      </div>
+
+      <div className="screen-scroll" style={{ padding: '16px 16px 8px' }}>
+        {/* Active call card */}
+        <div style={{ background: '#1A365D', borderRadius: 20, padding: '20px', marginBottom: 14, boxShadow: '0 4px 20px rgba(26,54,93,0.2)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+            <div>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)', marginBottom: 3 }}>{call.id}</div>
+              <div style={{ fontSize: 17, fontWeight: 800, color: '#fff' }}>{call.type}</div>
+            </div>
+            <div style={{ background: '#E53E3E', borderRadius: 8, padding: '4px 10px', fontSize: 12, fontWeight: 700, color: '#fff' }}>דחוף</div>
+          </div>
+          <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.75)', lineHeight: '1.6', marginBottom: 14 }}>{call.desc}</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,0.1)', borderRadius: 10, padding: '10px 12px' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="rgba(255,255,255,0.8)"/></svg>
+            <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)' }}>{call.location}</span>
+          </div>
+        </div>
+
+        {/* Tools */}
+        <div className="card" style={{ marginBottom: 14 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+            <Icon name="wrench" size={18} color="#1A365D" />
+            <div style={{ fontSize: 14, fontWeight: 700, color: '#1A365D' }}>ציוד נדרש</div>
+            <span className="badge badge-blue" style={{ marginRight: 'auto', fontSize: 11 }}>{call.tools.length} פריטים</span>
+          </div>
+          {call.tools.map((tool, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderBottom: i < call.tools.length - 1 ? '1px solid #f0f4f8' : 'none' }}>
+              <div style={{ width: 8, height: 8, background: '#1A365D', borderRadius: '50%', flexShrink: 0 }} />
+              <span style={{ fontSize: 14, color: '#2d3748' }}>{tool}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Actions */}
+        {!resolved ? (
+          <>
+            {!ack ? (
+              <button className="btn-primary" style={{ marginBottom: 10, height: 52 }} onClick={() => setAck(true)}>
+                ✓ אישור קבלת קריאה
+              </button>
+            ) : (
+              <div style={{ background: '#f0faf4', border: '1.5px solid #38A169', borderRadius: 14, padding: '12px 16px', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 10 }}>
+                <Icon name="check" size={18} color="#38A169" />
+                <span style={{ fontSize: 14, fontWeight: 600, color: '#38A169' }}>הקריאה אושרה — בדרך לתיקון</span>
+              </div>
+            )}
+            {ack && (
+              <button className="btn-primary" style={{ background: '#E53E3E', height: 52 }} onClick={() => setResolveOpen(true)}>
+                סגירת קריאה
+              </button>
+            )}
+          </>
+        ) : (
+          <div style={{ background: '#f0faf4', borderRadius: 16, padding: '20px', textAlign: 'center' }}>
+            <div style={{ width: 52, height: 52, background: '#38A169', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 10px' }}>
+              <Icon name="check" size={24} color="#fff" />
+            </div>
+            <div style={{ fontSize: 17, fontWeight: 800, color: '#38A169' }}>הקריאה נסגרה בהצלחה</div>
+          </div>
+        )}
+
+        {/* History */}
+        <div style={{ fontSize: 14, fontWeight: 700, color: '#1A365D', margin: '16px 0 10px' }}>היסטוריית קריאות</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 8 }}>
+          {CALL_HISTORY.map((c, i) => (
+            <div key={i} className="card" style={{ padding: '12px 14px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: '#1A365D' }}>{c.type}</div>
+                  <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 2 }}>{c.id} • {c.date}</div>
+                </div>
+                <div style={{ textAlign: 'left' }}>
+                  <span className="badge badge-green" style={{ fontSize: 11 }}>טופל</span>
+                  <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 4 }}>{c.duration}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Resolve sheet */}
+      {resolveOpen && (
+        <div className="confirm-overlay" onClick={() => setResolveOpen(false)}>
+          <div className="confirm-sheet" onClick={e => e.stopPropagation()}>
+            <div style={{ width: 36, height: 4, background: '#e2e8f0', borderRadius: 2, margin: '0 auto 20px' }} />
+            <div style={{ fontSize: 18, fontWeight: 800, color: '#1A365D', marginBottom: 14 }}>סיכום טיפול בתקלה</div>
+            <textarea className="field" rows={4} placeholder="תאר את הפעולות שבוצעו לתיקון התקלה..." value={notes} onChange={e => setNotes(e.target.value)} style={{ resize: 'none', marginBottom: 16 }} />
+            <button className="btn-primary" style={{ background: '#38A169', marginBottom: 10 }} onClick={() => { setResolved(true); setResolveOpen(false); }}>אישור סגירה</button>
+            <button className="btn-outline" onClick={() => setResolveOpen(false)}>ביטול</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ──────────────────────────────────────────────
+// PROFILE SCREEN (stub)
+// ──────────────────────────────────────────────
+function ProfileScreen({ role, onLogout }) {
+  return (
+    <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', background: '#f7fafc' }}>
+      <StatusBar />
+      <div style={{ background: '#1A365D', padding: '28px 20px 32px', textAlign: 'center' }}>
+        <div style={{ width: 72, height: 72, background: 'rgba(255,255,255,0.15)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+          <Icon name="profile" size={36} color="#fff" />
+        </div>
+        <div style={{ fontSize: 20, fontWeight: 800, color: '#fff' }}>דניאל כהן</div>
+        <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)', marginTop: 4 }}>{role === 'employee' ? 'עובד חנות' : 'טכנאי רובוטיקה'}</div>
+        <span className="badge badge-green" style={{ marginTop: 10, display: 'inline-flex' }}>מחובר</span>
+      </div>
+      <div style={{ padding: '16px' }}>
+        {/* Personal info section */}
+        <div style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8', letterSpacing: 1, marginBottom: 8, paddingRight: 4 }}>פרטים אישיים</div>
+        {[
+          ['שם מלא', 'דניאל כהן'],
+          ['תעודת זהות', '302-456-789'],
+          ['תאריך לידה', '15.03.1994'],
+        ].map(([k, v]) => (
+          <div key={k} className="card" style={{ marginBottom: 8, padding: '14px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: 14, color: '#94a3b8' }}>{k}</span>
+            <span style={{ fontSize: 14, fontWeight: 600, color: '#1A365D' }}>{v}</span>
+          </div>
+        ))}
+
+        {/* Employment info section */}
+        <div style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8', letterSpacing: 1, margin: '16px 0 8px', paddingRight: 4 }}>פרטי העסקה</div>
+        {[
+          ['מזהה עובד', 'EMP-00214'],
+          ['תפקיד', role === 'employee' ? 'עובד חנות' : 'טכנאי רובוטיקה'],
+          ['תחנה', 'תחנה ראשית'],
+          ['תאריך התחלה', '01.09.2021'],
+          ['סטטוס', 'פעיל'],
+        ].map(([k, v]) => (
+          <div key={k} className="card" style={{ marginBottom: 8, padding: '14px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: 14, color: '#94a3b8' }}>{k}</span>
+            <span style={{ fontSize: 14, fontWeight: 600, color: k === 'סטטוס' ? '#38A169' : '#1A365D' }}>{v}</span>
+          </div>
+        ))}
+
+        <button className="btn-primary" style={{ marginTop: 16, background: '#E53E3E' }} onClick={onLogout}>יציאה מהמערכת</button>
+      </div>
+    </div>
+  );
+}
+
+// ──────────────────────────────────────────────
+// APP ROOT
+// ──────────────────────────────────────────────
+function App() {
+  const [screen, setScreen] = useState('login'); // login | home | clockin | orders | orderDetail | shifts | serviceCall | profile
+  const [role, setRole] = useState('employee');
+  const [clockedIn, setClockedIn] = useState(false);
+  const [orders, setOrders] = useState(ORDERS_DATA);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [activeTab, setActiveTab] = useState('home');
+  const [tweaks, setTweak] = useTweaks({
+    "roleView": "employee",
+    "showBadge": true,
+  });
+
+  const pendingCount = orders.filter(o => o.status === 'pending').length;
+
+  const homeScreen = role === 'technician' ? 'serviceCall' : 'home';
+
+  const handleNav = (tab) => {
+    setActiveTab(tab);
+    if (tab === 'home') setScreen(homeScreen);
+    else if (tab === 'orders') setScreen('orders');
+    else if (tab === 'shifts') setScreen('shifts');
+    else if (tab === 'profile') setScreen('profile');
+    else if (tab === 'clockin') setScreen('clockin');
+  };
+
+  const handleLogin = (r) => {
+    setRole(r);
+    if (r === 'technician') setScreen('serviceCall');
+    else setScreen('home');
+  };
+
+  const showNav = screen !== 'login' && screen !== 'orderDetail';
+
+  const getNavTab = () => {
+    if (screen === 'home') return 'home';
+    if (screen === 'orders' || screen === 'orderDetail') return 'orders';
+    if (screen === 'shifts') return 'shifts';
+    if (screen === 'profile') return 'profile';
+    if (screen === 'serviceCall') return 'home';
+    if (screen === 'clockin') return 'home';
+    return activeTab;
+  };
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+      <div className="phone-shell">
+        <div className="phone-screen">
+          <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative' }}>
+            {screen === 'login' && <LoginScreen onLogin={handleLogin} />}
+            {screen === 'home' && (
+              <HomeScreen onNav={s => { if (s === 'clockin') setScreen('clockin'); else if (s === 'orders') { setActiveTab('orders'); setScreen('orders'); } else if (s === 'shifts') { setActiveTab('shifts'); setScreen('shifts'); } }} clockedIn={clockedIn} orderCount={tweaks.showBadge ? pendingCount : 0} onBell={() => { setActiveTab('orders'); setScreen('orders'); }} />
+            )}
+            {screen === 'clockin' && <ClockScreen clockedIn={clockedIn} setClockedIn={setClockedIn} onBack={() => setScreen(homeScreen)} />}
+            {screen === 'orders' && (
+              <OrdersScreen orders={orders} setOrders={setOrders} onSelect={o => { setSelectedOrder(o); setScreen('orderDetail'); }} onBack={() => setScreen(homeScreen)} />
+            )}
+            {screen === 'orderDetail' && selectedOrder && (
+              <OrderDetailScreen order={selectedOrder} onBack={() => setScreen('orders')} onDeliver={id => setOrders(orders.map(o => o.id === id ? { ...o, status: 'delivered' } : o))} />
+            )}
+            {screen === 'shifts' && <ShiftsScreen onBack={() => setScreen(homeScreen)} />}
+            {screen === 'serviceCall' && <ServiceCallScreen onBack={() => setScreen(homeScreen)} />}
+            {screen === 'profile' && <ProfileScreen role={role} onLogout={() => setScreen('login')} />}
+          </div>
+
+          {showNav && (
+            <BottomNav
+              active={getNavTab()}
+              onNav={handleNav}
+              orderBadge={tweaks.showBadge ? pendingCount : 0}
+            />
+          )}
+        </div>
+      </div>
+
+      <TweaksPanel>
+        <TweakSection title="תצוגה">
+          <TweakRadio id="roleView" label="תפקיד" options={[{label:'עובד חנות',value:'employee'},{label:'טכנאי',value:'technician'}]}
+            onChange={v => { setRole(v); if (v === 'technician' && screen !== 'login') setScreen('serviceCall'); else if (v === 'employee' && screen !== 'login') setScreen('home'); }} />
+          <TweakToggle id="showBadge" label="הצג badge הזמנות" />
+        </TweakSection>
+      </TweaksPanel>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
