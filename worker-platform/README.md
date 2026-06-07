@@ -60,24 +60,26 @@ gsm-employee-platform/
 ## How to Run
 
 ### Prerequisites
-- Node.js 18 or later
-- npm
+- [Node.js 18 or later](https://nodejs.org) — download and install if not already installed
+- npm (comes with Node.js)
 
 ### Installation
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/YOUR_USERNAME/gsm-employee-platform.git
-cd gsm-employee-platform
+git clone https://github.com/kamaltareef/GSM.git
 
-# 2. Install dependencies
+# 2. Navigate into the worker platform folder
+cd GSM/worker-platform
+
+# 3. Install dependencies
 npm install
 
-# 3. Start the development server
+# 4. Start the development server
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3000](http://localhost:3000) in your browser — the app loads immediately, no login credentials required.
 
 ### Build for Production
 
@@ -141,6 +143,10 @@ Manages the current screen using `useState`. Handles role-based routing (technic
 
 ---
 
-## Author
+## Assignment
 
-Built with Claude Code — GSM Workers Platform project.
+This component was submitted as part of the GSM System project.
+
+- **GitHub Repository:** https://github.com/kamaltareef/GSM
+- **Assignment Link:** https://classroom.github.com/a/BdPS5veC
+- **Student:** Kamal Tareef
