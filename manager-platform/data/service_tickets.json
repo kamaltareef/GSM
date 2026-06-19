@@ -1,0 +1,8 @@
+[
+  { "id": "69ef8a472bc74b2b3e29f6aa", "station_id": "69ef89f52bc74b2b3e29f673", "title": "תקלה במשאבה מספר 3", "description": "משאבה 3 לא מזהה את המצבר - נדרש חילוף מדחסור", "priority": "critical", "category": "pump", "status": "in_progress", "assigned_to": "יוסי טכנאי" },
+  { "id": "69ef8a472bc74b2b3e29f6ab", "station_id": "69ef89f52bc74b2b3e29f673", "title": "עמדת טעינה 5 אופליין", "description": "עמדה 5 עברה למצב offline ואינה מגיבה לפקודות איפוס", "priority": "high", "category": "charging_station", "status": "resolved", "assigned_to": "דנה חשמלאי" },
+  { "id": "69ef8a472bc74b2b3e29f6ac", "station_id": "69ef89f52bc74b2b3e29f676", "title": "תקלה במערכת החשמל", "description": "חשמל לא יציב בתיבת עמדות הדלק", "priority": "critical", "category": "electrical", "status": "open", "assigned_to": "" },
+  { "id": "69ef8a472bc74b2b3e29f6ad", "station_id": "69ef89f52bc74b2b3e29f674", "title": "חיישן מיכל ניסר - מיכל 2", "description": "חיישן מפלס הדלק במיכל 2 הפסיק לשלוח נתונים", "priority": "high", "category": "sensor", "status": "open", "assigned_to": "אלי טכנאי" },
+  { "id": "69ef8a472bc74b2b3e29f6ae", "station_id": "69ef89f52bc74b2b3e29f673", "title": "תחזוקת גג תדרתי", "description": "תחזוקת גג תדרתי שנתי רבעונית", "priority": "medium", "category": "plumbing", "status": "in_progress", "assigned_to": "רדי אינסטלטור" },
+  { "id": "69ef8a472bc74b2b3e29f6af", "station_id": "69ef89f52bc74b2b3e29f673", "title": "עדכון תוכנת קופאות", "description": "עדכון תוכנת קופאות לגרסא 2.4.1", "priority": "low", "category": "other", "status": "resolved", "assigned_to": "דני מתכנת" }
+]

@@ -1,0 +1,3 @@
+[
+  { "id": "6a21f10c3c77c23af76ad91d", "station_id": "69ef89f52bc74b2b3e29f675", "product_name": "קולה", "category": "drinks", "supplier_name": "קוקה קולה", "current_quantity": 20, "min_threshold": 10, "price": -8.5, "cost_price": 3.6, "auto_reorder": true, "reorder_quantity": 20 }
+]

@@ -1,0 +1,14 @@
+{
+  "name": "PriceUpdate",
+  "type": "object",
+  "properties": {
+    "station_id": { "type": "string" },
+    "fuel_type": { "type": "string", "enum": ["benzine_95", "benzine_98", "diesel", "autogas", "electric_kwh"] },
+    "old_price": { "type": "number" },
+    "new_price": { "type": "number" },
+    "effective_date": { "type": "string", "format": "date-time" },
+    "status": { "type": "string", "enum": ["scheduled", "applied", "cancelled"], "default": "scheduled" },
+    "updated_by": { "type": "string" }
+  },
+  "required": ["station_id", "fuel_type", "new_price"]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "ServiceTicket",
+  "type": "object",
+  "properties": {
+    "station_id": { "type": "string" },
+    "title": { "type": "string", "description": "כותרת התקלה" },
+    "description": { "type": "string", "description": "תיאור מפורט" },
+    "priority": { "type": "string", "enum": ["critical", "high", "medium", "low"], "default": "medium" },
+    "status": { "type": "string", "enum": ["open", "assigned", "in_progress", "resolved", "closed"], "default": "open" },
+    "category": { "type": "string", "enum": ["pump", "charging_station", "sensor", "electrical", "plumbing", "payment_terminal", "other"], "description": "קטגוריה" },
+    "assigned_to": { "type": "string", "description": "טכנאי מוקצה" },
+    "equipment_id": { "type": "string", "description": "מזהה ציוד" },
+    "resolved_date": { "type": "string", "format": "date-time" },
+    "resolution_notes": { "type": "string" }
+  },
+  "required": ["station_id", "title"]
+}

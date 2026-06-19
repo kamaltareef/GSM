@@ -1,0 +1,18 @@
+{
+  "name": "Station",
+  "type": "object",
+  "properties": {
+    "name": { "type": "string", "description": "שם התחנה" },
+    "address": { "type": "string", "description": "כתובת" },
+    "city": { "type": "string", "description": "עיר" },
+    "status": { "type": "string", "enum": ["active", "maintenance", "closed"], "default": "active", "description": "סטטוס התחנה" },
+    "manager_name": { "type": "string", "description": "שם מנהל התחנה" },
+    "manager_email": { "type": "string", "description": "אימייל מנהל" },
+    "fuel_pumps_count": { "type": "number", "description": "מספר משאבות דלק" },
+    "charging_stations_count": { "type": "number", "description": "מספר עמדות טעינה" },
+    "has_convenience_store": { "type": "boolean", "default": true, "description": "האם יש חנות נוחות" },
+    "latitude": { "type": "number" },
+    "longitude": { "type": "number" }
+  },
+  "required": ["name", "address"]
+}

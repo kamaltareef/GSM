@@ -1,0 +1,14 @@
+{
+  "name": "AuditLog",
+  "type": "object",
+  "properties": {
+    "action": { "type": "string", "description": "סוג הפעולה" },
+    "entity_type": { "type": "string", "description": "סוג הישות שעודכנה" },
+    "entity_id": { "type": "string", "description": "מזהה הישות" },
+    "performed_by": { "type": "string", "description": "שם המשתמש שביצע את הפעולה" },
+    "details": { "type": "string", "description": "פרטים נוספים על הפעולה" },
+    "old_value": { "type": "string", "description": "ערך ישן" },
+    "new_value": { "type": "string", "description": "ערך חדש" }
+  },
+  "required": ["action", "entity_type"]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "PurchaseOrder",
+  "type": "object",
+  "properties": {
+    "station_id": { "type": "string", "description": "מזהה תחנה" },
+    "order_type": { "type": "string", "enum": ["fuel", "store_products"], "description": "סוג הזמנה" },
+    "fuel_type": { "type": "string", "enum": ["benzine_95", "benzine_98", "diesel", "autogas"], "description": "סוג דלק (לדלק בלבד)" },
+    "quantity": { "type": "number", "description": "כמות (ליטרים / יחידות)" },
+    "supplier_name": { "type": "string", "description": "שם הספק" },
+    "estimated_cost": { "type": "number", "description": "עלות משוערת" },
+    "status": { "type": "string", "enum": ["pending", "approved", "ordered", "delivered", "cancelled"], "default": "pending", "description": "סטטוס ההזמנה" },
+    "notes": { "type": "string", "description": "הערות" },
+    "expected_delivery_date": { "type": "string", "format": "date", "description": "תאריך אספקה משוער" },
+    "triggered_by": { "type": "string", "enum": ["automatic", "manual"], "default": "manual", "description": "אופן יצירת ההזמנה" }
+  },
+  "required": ["order_type", "quantity"]
+}

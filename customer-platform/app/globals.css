@@ -1,0 +1,51 @@
+:root { color-scheme: light; }
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #F0EEE9;
+  font-family: 'Heebo', system-ui, sans-serif;
+}
+
+@keyframes gsm-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.2); }
+}
+
+@keyframes gsm-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.gsm-fade { animation: gsm-fade-in 0.4s ease both; }
+
+button { font-family: inherit; }
+
+/* Range slider thumb (fuel amount, etc.) */
+input[type=range]::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid var(--gsm-accent, #FF5E3A);
+  box-shadow: 0 2px 8px var(--gsm-ring, rgba(255,94,58,0.22));
+  cursor: pointer;
+}
+
+input[type=range]::-moz-range-thumb {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid var(--gsm-accent, #FF5E3A);
+  box-shadow: 0 2px 8px var(--gsm-ring, rgba(255,94,58,0.22));
+  cursor: pointer;
+}
+
+/* Hide scrollbars inside the phone frame for a native feel */
+.gsm-scroll::-webkit-scrollbar { width: 0; height: 0; }
+.gsm-scroll { scrollbar-width: none; }

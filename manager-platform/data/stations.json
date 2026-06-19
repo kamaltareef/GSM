@@ -1,0 +1,58 @@
+[
+  {
+    "id": "69ef89f52bc74b2b3e29f673",
+    "name": "GSM תל אביב מרכז",
+    "address": "רחוב הרצל 45",
+    "city": "תל אביב",
+    "status": "active",
+    "manager_name": "דני לוי",
+    "manager_email": "dani@gsm.co.il",
+    "fuel_pumps_count": 8,
+    "charging_stations_count": 6,
+    "has_convenience_store": true,
+    "latitude": 32.0853,
+    "longitude": 34.7818
+  },
+  {
+    "id": "69ef89f52bc74b2b3e29f674",
+    "name": "GSM חיפה נמל",
+    "address": "רחוב הנמל 12",
+    "city": "חיפה",
+    "status": "active",
+    "manager_name": "רחל כהן",
+    "manager_email": "rachel@gsm.co.il",
+    "fuel_pumps_count": 6,
+    "charging_stations_count": 4,
+    "has_convenience_store": true,
+    "latitude": 32.8156,
+    "longitude": 34.989
+  },
+  {
+    "id": "69ef89f52bc74b2b3e29f675",
+    "name": "GSM ירושלים גילה",
+    "address": "שדרות גילה 88",
+    "city": "ירושלים",
+    "status": "active",
+    "manager_name": "משה אברהם",
+    "manager_email": "moshe@gsm.co.il",
+    "fuel_pumps_count": 4,
+    "charging_stations_count": 3,
+    "has_convenience_store": false,
+    "latitude": 31.7683,
+    "longitude": 35.2137
+  },
+  {
+    "id": "69ef89f52bc74b2b3e29f676",
+    "name": "GSM באר שבע דרום",
+    "address": "רחוב בן גוריון 200",
+    "city": "באר שבע",
+    "status": "maintenance",
+    "manager_name": "יעל שפירא",
+    "manager_email": "yael@gsm.co.il",
+    "fuel_pumps_count": 5,
+    "charging_stations_count": 2,
+    "has_convenience_store": true,
+    "latitude": 31.2518,
+    "longitude": 34.7915
+  }
+]

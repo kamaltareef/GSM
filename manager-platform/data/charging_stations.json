@@ -1,0 +1,12 @@
+[
+  { "id": "69ef8a072bc74b2b3e29f680", "station_id": "69ef89f52bc74b2b3e29f673", "charger_number": 1, "charger_type": "ultra_fast", "power_kw": 150, "price_per_kwh": 1.85, "status": "in_use", "energy_delivered_today_kwh": 320 },
+  { "id": "69ef8a072bc74b2b3e29f681", "station_id": "69ef89f52bc74b2b3e29f673", "charger_number": 2, "charger_type": "ultra_fast", "power_kw": 150, "price_per_kwh": 1.85, "status": "available", "energy_delivered_today_kwh": 210 },
+  { "id": "69ef8a072bc74b2b3e29f682", "station_id": "69ef89f52bc74b2b3e29f673", "charger_number": 3, "charger_type": "fast_dc", "power_kw": 50, "price_per_kwh": 1.6, "status": "in_use", "energy_delivered_today_kwh": 145 },
+  { "id": "69ef8a072bc74b2b3e29f683", "station_id": "69ef89f52bc74b2b3e29f673", "charger_number": 4, "charger_type": "fast_dc", "power_kw": 50, "price_per_kwh": 1.6, "status": "available", "energy_delivered_today_kwh": 98 },
+  { "id": "69ef8a072bc74b2b3e29f684", "station_id": "69ef89f52bc74b2b3e29f673", "charger_number": 5, "charger_type": "standard_ac", "power_kw": 22, "price_per_kwh": 1.4, "status": "maintenance", "energy_delivered_today_kwh": 0 },
+  { "id": "69ef8a072bc74b2b3e29f685", "station_id": "69ef89f52bc74b2b3e29f673", "charger_number": 6, "charger_type": "standard_ac", "power_kw": 22, "price_per_kwh": 1.4, "status": "available", "energy_delivered_today_kwh": 55 },
+  { "id": "69ef8a072bc74b2b3e29f686", "station_id": "69ef89f52bc74b2b3e29f674", "charger_number": 1, "charger_type": "fast_dc", "power_kw": 50, "price_per_kwh": 1.6, "status": "in_use", "energy_delivered_today_kwh": 178 },
+  { "id": "69ef8a072bc74b2b3e29f687", "station_id": "69ef89f52bc74b2b3e29f674", "charger_number": 2, "charger_type": "fast_dc", "power_kw": 50, "price_per_kwh": 1.6, "status": "available", "energy_delivered_today_kwh": 134 },
+  { "id": "69ef8a072bc74b2b3e29f688", "station_id": "69ef89f52bc74b2b3e29f674", "charger_number": 3, "charger_type": "standard_ac", "power_kw": 22, "price_per_kwh": 1.4, "status": "available", "energy_delivered_today_kwh": 44 },
+  { "id": "69ef8a072bc74b2b3e29f689", "station_id": "69ef89f52bc74b2b3e29f674", "charger_number": 4, "charger_type": "standard_ac", "power_kw": 22, "price_per_kwh": 1.4, "status": "offline", "energy_delivered_today_kwh": 0 }
+]

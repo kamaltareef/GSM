@@ -4,7 +4,7 @@ import { Order } from '@/lib/data';
 
 interface OrdersScreenProps {
   orders: Order[];
-  setOrders: (orders: Order[]) => void;
+  onStatusChange: (id: string, status: Order['status']) => void;
   onSelect: (order: Order) => void;
   onBack: () => void;
 }
@@ -12,10 +12,10 @@ interface OrdersScreenProps {
 const statusLabel: Record<string, string> = { pending: 'ממתין', preparation: 'בהכנה', ready: 'מוכן', delivered: 'נמסר' };
 const statusClass: Record<string, string> = { pending: 'badge-orange', preparation: 'badge-blue', ready: 'badge-green', delivered: 'badge-gray' };
 
-export default function OrdersScreen({ orders, setOrders, onSelect, onBack }: OrdersScreenProps) {
+export default function OrdersScreen({ orders, onStatusChange, onSelect, onBack }: OrdersScreenProps) {
   const markReady = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setOrders(orders.map(o => o.id === id ? { ...o, status: 'ready' as const } : o));
+    onStatusChange(id, 'ready');
   };
 
   return (

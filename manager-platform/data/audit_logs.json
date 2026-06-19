@@ -1,0 +1,4 @@
+[
+  { "id": "6a249a95dcb004ddc73f8231", "action": "price_update", "entity_type": "FuelTank", "entity_id": "69ef8a072bc74b2b3e29f67a", "performed_by": "Kamal Tarif", "details": "עדכון מחיר סולר", "old_value": "₪8.50", "new_value": "₪10.00" },
+  { "id": "6a21670ab14df05e8d5e7c63", "action": "auto_purchase_order", "entity_type": "PurchaseOrder", "entity_id": "6a21670ab172b6c985019e0e", "details": "הזמנה אוטומטית בנזין 98 — רמה 14%", "new_value": "21300 ליטרים" }
+]

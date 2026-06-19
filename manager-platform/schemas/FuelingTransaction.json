@@ -1,0 +1,19 @@
+{
+  "name": "FuelingTransaction",
+  "type": "object",
+  "properties": {
+    "station_id": { "type": "string", "description": "מזהה תחנה" },
+    "vehicle_plate": { "type": "string", "description": "מספר רישוי" },
+    "customer_name": { "type": "string", "description": "שם לקוח" },
+    "customer_email": { "type": "string", "description": "אימייל לקוח" },
+    "fuel_type": { "type": "string", "enum": ["benzine_95", "benzine_98", "diesel", "autogas"] },
+    "liters": { "type": "number", "description": "כמות ליטרים" },
+    "price_per_liter": { "type": "number" },
+    "total_amount": { "type": "number", "description": "סכום כולל" },
+    "payment_method": { "type": "string", "enum": ["app", "cash_terminal", "credit_card"], "description": "אמצעי תשלום" },
+    "status": { "type": "string", "enum": ["pending", "in_progress", "completed", "cancelled", "failed"], "default": "pending" },
+    "pump_number": { "type": "number", "description": "מספר משאבה" },
+    "is_autonomous": { "type": "boolean", "default": false, "description": "תדלוק אוטונומי" }
+  },
+  "required": ["station_id", "fuel_type"]
+}

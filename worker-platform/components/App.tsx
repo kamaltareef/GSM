@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import BottomNav from './BottomNav';
 import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
@@ -11,6 +11,7 @@ import ShiftsScreen from './screens/ShiftsScreen';
 import ServiceCallScreen from './screens/ServiceCallScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import { ORDERS_DATA, Order } from '@/lib/data';
+import { subscribeOrders, setOrderStatus, firebaseEnabled } from '@/lib/db';
 
 type Screen = 'login' | 'home' | 'clockin' | 'orders' | 'orderDetail' | 'shifts' | 'serviceCall' | 'profile';
 type Role = 'employee' | 'technician';
@@ -23,6 +24,19 @@ export default function App() {
   const [orders, setOrders] = useState<Order[]>(ORDERS_DATA);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [activeTab, setActiveTab] = useState<NavTab>('home');
+
+  // When Firebase is configured, subscribe to the shared `orders` collection so
+  // orders placed in the Customer app appear here live. Otherwise use sample data.
+  useEffect(() => {
+    if (!firebaseEnabled) return;
+    return subscribeOrders(live => setOrders(live.length ? live : ORDERS_DATA));
+  }, []);
+
+  // Update status both locally (instant UI) and in Firestore (shared with Customer app).
+  const changeOrderStatus = (id: string, status: Order['status']) => {
+    setOrders(prev => prev.map(o => (o.id === id ? { ...o, status } : o)));
+    setOrderStatus(id, status).catch(() => {});
+  };
 
   const pendingCount = orders.filter(o => o.status === 'pending').length;
   const homeScreen: Screen = role === 'technician' ? 'serviceCall' : 'home';
@@ -76,7 +90,7 @@ export default function App() {
             {screen === 'orders' && (
               <OrdersScreen
                 orders={orders}
-                setOrders={setOrders}
+                onStatusChange={changeOrderStatus}
                 onSelect={o => { setSelectedOrder(o); setScreen('orderDetail'); }}
                 onBack={() => setScreen(homeScreen)}
               />
@@ -85,7 +99,7 @@ export default function App() {
               <OrderDetailScreen
                 order={selectedOrder}
                 onBack={() => setScreen('orders')}
-                onDeliver={id => setOrders(orders.map(o => o.id === id ? { ...o, status: 'delivered' as const } : o))}
+                onDeliver={id => changeOrderStatus(id, 'delivered')}
               />
             )}
             {screen === 'shifts' && <ShiftsScreen onBack={() => setScreen(homeScreen)} />}

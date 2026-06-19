@@ -1,0 +1,7 @@
+[
+  { "id": "6a1b4825d9549d2218a4a39b", "employee_id": "6a08e81c69077f366e63d56e", "employee_name": "כמאל טריף", "date": "2026-05-31", "shift_type": "morning", "status": "scheduled" },
+  { "id": "6a0f1c16ee4c243d7bf5e031", "employee_id": "6a08e81c69077f366e63d56e", "employee_name": "כמאל טריף", "date": "2026-05-18", "shift_type": "morning", "status": "scheduled" },
+  { "id": "6a08e8490780506a28c81dfb", "employee_id": "6a08e81c69077f366e63d56e", "employee_name": "כמאל טריף", "date": "2026-05-23", "shift_type": "morning", "status": "scheduled" },
+  { "id": "6a02f0d1c4c2f1fcff893b85", "employee_id": "6a02f007fbd80d70823af813", "employee_name": "אדהם", "date": "2026-05-14", "shift_type": "morning", "status": "scheduled" },
+  { "id": "6a02f06dbcf0cea700ae84bf", "employee_id": "6a02f007fbd80d70823af813", "employee_name": "אדהם", "date": "2026-05-13", "shift_type": "morning", "status": "scheduled" }
+]

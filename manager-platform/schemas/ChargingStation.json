@@ -1,0 +1,15 @@
+{
+  "name": "ChargingStation",
+  "type": "object",
+  "properties": {
+    "station_id": { "type": "string", "description": "מזהה תחנה" },
+    "charger_number": { "type": "number", "description": "מספר עמדה" },
+    "charger_type": { "type": "string", "enum": ["fast_dc", "standard_ac", "ultra_fast"], "description": "סוג מטען" },
+    "power_kw": { "type": "number", "description": "הספק בקילוואט" },
+    "status": { "type": "string", "enum": ["available", "in_use", "reserved", "maintenance", "offline"], "default": "available" },
+    "current_session_id": { "type": "string", "description": "מזהה סשן טעינה נוכחי" },
+    "energy_delivered_today_kwh": { "type": "number", "default": 0, "description": "אנרגיה שסופקה היום בקוט״ש" },
+    "price_per_kwh": { "type": "number", "description": "מחיר לקוט״ש" }
+  },
+  "required": ["station_id", "charger_type", "power_kw"]
+}

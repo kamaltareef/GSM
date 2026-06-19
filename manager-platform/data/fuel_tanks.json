@@ -1,0 +1,8 @@
+[
+  { "id": "69ef8a072bc74b2b3e29f679", "station_id": "69ef89f52bc74b2b3e29f673", "fuel_type": "benzine_98", "capacity_liters": 30000, "current_level_liters": 4200, "current_level_percent": 14, "price_per_liter": 9, "min_threshold_percent": 15, "status": "low_level" },
+  { "id": "69ef8a072bc74b2b3e29f67a", "station_id": "69ef89f52bc74b2b3e29f673", "fuel_type": "diesel", "capacity_liters": 40000, "current_level_liters": 28800, "current_level_percent": 72, "price_per_liter": 10, "min_threshold_percent": 15, "status": "operational" },
+  { "id": "69ef8a072bc74b2b3e29f67b", "station_id": "69ef89f52bc74b2b3e29f673", "fuel_type": "autogas", "capacity_liters": 20000, "current_level_liters": 11000, "current_level_percent": 55, "price_per_liter": 3.15, "min_threshold_percent": 15, "status": "operational" },
+  { "id": "69ef8a072bc74b2b3e29f67c", "station_id": "69ef89f52bc74b2b3e29f674", "fuel_type": "benzine_95", "capacity_liters": 40000, "current_level_liters": 18000, "current_level_percent": 45, "price_per_liter": 7.5, "min_threshold_percent": 15, "status": "operational" },
+  { "id": "69ef8a072bc74b2b3e29f67d", "station_id": "69ef89f52bc74b2b3e29f674", "fuel_type": "diesel", "capacity_liters": 35000, "current_level_liters": 5250, "current_level_percent": 15, "price_per_liter": 10, "min_threshold_percent": 15, "status": "low_level" },
+  { "id": "69ef8a072bc74b2b3e29f67e", "station_id": "69ef89f52bc74b2b3e29f675", "fuel_type": "benzine_95", "capacity_liters": 25000, "current_level_liters": 3000, "current_level_percent": 12, "price_per_liter": 7.5, "min_threshold_percent": 15, "status": "low_level" }
+]

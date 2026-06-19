@@ -1,0 +1,28 @@
+[
+  {
+    "id": "6a08e81c69077f366e63d56e",
+    "full_name": "כמאל טריף",
+    "id_number": "212009492",
+    "phone": "0525576400",
+    "email": "",
+    "role": "manager",
+    "station_id": null,
+    "status": "active",
+    "start_date": "2026-05-17",
+    "hourly_rate": 60,
+    "notes": ""
+  },
+  {
+    "id": "6a02f007fbd80d70823af813",
+    "full_name": "אדהם",
+    "id_number": "222222",
+    "phone": "5666666",
+    "email": "גכעמגכענמגכנ",
+    "role": "cashier",
+    "station_id": null,
+    "status": "active",
+    "start_date": "2000-07-11",
+    "hourly_rate": -5,
+    "notes": ""
+  }
+]

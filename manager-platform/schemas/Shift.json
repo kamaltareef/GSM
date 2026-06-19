@@ -1,0 +1,16 @@
+{
+  "name": "Shift",
+  "type": "object",
+  "properties": {
+    "employee_id": { "type": "string", "description": "מזהה עובד" },
+    "employee_name": { "type": "string", "description": "שם עובד" },
+    "station_id": { "type": "string", "description": "מזהה תחנה" },
+    "date": { "type": "string", "format": "date", "description": "תאריך משמרת" },
+    "shift_type": { "type": "string", "enum": ["morning", "afternoon", "night"], "description": "סוג משמרת" },
+    "start_time": { "type": "string", "description": "שעת התחלה" },
+    "end_time": { "type": "string", "description": "שעת סיום" },
+    "status": { "type": "string", "enum": ["scheduled", "in_progress", "completed", "absent"], "default": "scheduled", "description": "סטטוס משמרת" },
+    "notes": { "type": "string", "description": "הערות" }
+  },
+  "required": ["employee_id", "date", "shift_type"]
+}

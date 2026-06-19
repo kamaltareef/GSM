@@ -1,0 +1,16 @@
+{
+  "name": "ConvenienceOrder",
+  "type": "object",
+  "properties": {
+    "station_id": { "type": "string" },
+    "customer_name": { "type": "string" },
+    "customer_email": { "type": "string" },
+    "vehicle_plate": { "type": "string" },
+    "items": { "type": "array", "items": { "type": "object", "properties": { "name": { "type": "string" }, "quantity": { "type": "number" }, "price": { "type": "number" } } } },
+    "total_amount": { "type": "number" },
+    "status": { "type": "string", "enum": ["pending", "preparing", "ready", "delivered", "cancelled"], "default": "pending" },
+    "delivery_type": { "type": "string", "enum": ["to_vehicle", "in_store"], "default": "to_vehicle", "description": "סוג הגשה" },
+    "notes": { "type": "string" }
+  },
+  "required": ["station_id"]
+}

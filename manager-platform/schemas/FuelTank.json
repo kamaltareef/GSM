@@ -1,0 +1,16 @@
+{
+  "name": "FuelTank",
+  "type": "object",
+  "properties": {
+    "station_id": { "type": "string", "description": "מזהה תחנה" },
+    "fuel_type": { "type": "string", "enum": ["benzine_95", "benzine_98", "diesel", "autogas"], "description": "סוג דלק" },
+    "capacity_liters": { "type": "number", "description": "קיבולת מיכל בליטרים" },
+    "current_level_liters": { "type": "number", "description": "מפלס נוכחי בליטרים" },
+    "current_level_percent": { "type": "number", "description": "אחוז מילוי" },
+    "price_per_liter": { "type": "number", "description": "מחיר לליטר" },
+    "min_threshold_percent": { "type": "number", "default": 15, "description": "סף מינימום להתראה באחוזים" },
+    "status": { "type": "string", "enum": ["operational", "low_level", "refilling", "maintenance"], "default": "operational" },
+    "last_refill_date": { "type": "string", "format": "date-time" }
+  },
+  "required": ["station_id", "fuel_type", "capacity_liters"]
+}

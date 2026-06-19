@@ -1,0 +1,18 @@
+{
+  "name": "StoreInventory",
+  "type": "object",
+  "properties": {
+    "station_id": { "type": "string", "description": "מזהה תחנה" },
+    "product_name": { "type": "string", "description": "שם מוצר" },
+    "category": { "type": "string", "enum": ["drinks", "food", "snacks", "tobacco", "car_accessories", "other"], "description": "קטגוריה" },
+    "sku": { "type": "string", "description": "מק\"ט מוצר" },
+    "current_quantity": { "type": "number", "default": 0, "description": "כמות נוכחית במלאי" },
+    "min_threshold": { "type": "number", "default": 5, "description": "סף מינימום להתראה" },
+    "price": { "type": "number", "description": "מחיר מכירה" },
+    "cost_price": { "type": "number", "description": "מחיר עלות" },
+    "supplier_name": { "type": "string", "description": "שם ספק" },
+    "auto_reorder": { "type": "boolean", "default": true, "description": "הזמנה אוטומטית בחוסר" },
+    "reorder_quantity": { "type": "number", "default": 20, "description": "כמות להזמנה אוטומטית" }
+  },
+  "required": ["product_name", "station_id"]
+}
