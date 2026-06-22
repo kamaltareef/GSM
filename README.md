@@ -35,6 +35,18 @@ cd GSM/worker-platform   && npm install && npm run dev -- -p 3001   # http://loc
 
 Without any setup, both apps run fine on local sample data. To connect them (and the Manager app) to one live shared database, follow [`GSM_FIREBASE_SETUP.md`](./GSM_FIREBASE_SETUP.md).
 
+## Testing
+
+Each platform has its own [Vitest](https://vitest.dev) unit-test suite under `tests/`, covering the exported functions in `lib/` (Firestore reads/writes for both the "Firebase connected" and "Firebase not configured" fallback paths, currency/theme formatting, demo-data invariants, and small utility helpers). 32 tests in total, all passing:
+
+| Platform | Tests | Run |
+|---|---|---|
+| Customer App | 14 | `cd customer-platform && npm test` |
+| Employee App | 10 | `cd worker-platform && npm test` |
+| Manager App | 8 | `cd manager-platform && npm test` |
+
+Acceptance testing (manual, against the running prototypes, covering every use-case scenario and branch from the SRS) is documented separately in the project's Software Testing Document (STD).
+
 ## Assignment
 
 - Repo: https://github.com/kamaltareef/GSM

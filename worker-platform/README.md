@@ -143,6 +143,24 @@ Manages the current screen using `useState`. Handles role-based routing (technic
 
 ---
 
+## Testing
+
+Unit tests use [Vitest](https://vitest.dev) and live in `tests/`:
+
+```bash
+npm test
+```
+
+| File | Covers |
+|---|---|
+| `data.test.ts` | Invariants of the sample data (`ORDERS_DATA`, `SHIFTS_DATA`, `SERVICE_CALLS`, `CALL_HISTORY`) |
+| `db.success.test.ts` | `subscribeOrders`, `setOrderStatus` with Firebase connected |
+| `db.fallback.test.ts` | Same functions when Firebase isn't configured (no-op fallbacks) |
+
+10 tests, all passing.
+
+---
+
 ## Assignment
 
 This component was submitted as part of the GSM System project.

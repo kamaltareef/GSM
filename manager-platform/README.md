@@ -102,6 +102,21 @@ manager-platform/
 | Employee | `worker-platform/` | Web app |
 | Customer | (planned) | Flutter mobile app |
 
+## Testing
+
+Unit tests use [Vitest](https://vitest.dev) + jsdom and live in `tests/`:
+
+```bash
+npm test
+```
+
+| File | Covers |
+|---|---|
+| `utils.test.js` | `cn()` class-name merging (clsx + tailwind-merge conflict resolution) |
+| `createPageUrl.test.js` | `createPageUrl()` route-slug generation |
+
+8 tests, all passing.
+
 ## Team
 
 - כמאל טריף (212009492)

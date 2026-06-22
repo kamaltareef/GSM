@@ -130,6 +130,24 @@ npm start
 
 ---
 
+## Testing
+
+Unit tests use [Vitest](https://vitest.dev) and live in `tests/`:
+
+```bash
+npm test
+```
+
+| File | Covers |
+|---|---|
+| `theme.test.ts` | `ils()` currency formatting, `GSM_THEMES` / `HE_FONT` / `MONO_FONT` |
+| `db.success.test.ts` | `createOrder`, `recordTransaction` with Firebase connected |
+| `db.fallback.test.ts` | Same functions when Firebase isn't configured (no-op, returns `null`) |
+
+14 tests, all passing.
+
+---
+
 ## Assignment
 
 This component was submitted as part of the GSM System project.
